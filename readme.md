@@ -42,3 +42,14 @@ To get RGB working properly, as well, you want to run a wire from the `A3` pin o
 Once you've done that, you can solder in the Proton C. and flash it.
 
 ![Proton C](https://i.imgur.com/nICqWLo.jpg)
+
+# Hilsen Daniel
+## Konvertere JSON keymap (fra QMK Configurator) til C
+```
+qmk json2c -o /c/Users/Daniel/qmk_firmware/keyboards/splitkb/kyria/keymaps/daniel/keymap.c /c/Users/Daniel/qmk_firmware/keyboards/splitkb/kyria/keymaps/daniel/daniel.json
+```
+
+## Kompilere
+```
+qmk compile -e CONVERT_TO=liatris -kb splitkb/kyria/rev3 -km daniel
+```
