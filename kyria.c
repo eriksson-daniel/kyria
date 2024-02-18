@@ -97,23 +97,72 @@ bool oled_task_kb(void) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_kb(uint8_t index, bool clockwise) {
-    if (!encoder_update_user(index, clockwise)) {
-        return false;
-    }
-
+    if (!encoder_update_user(index, clockwise)) { return false; }
     if (index == 0) {
-        // Volume control
-        if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
-            tap_code(KC_VOLD);
+        switch(biton32(layer_state)){
+            case 1:
+                if (clockwise) {
+                    tap_code(KC_MS_WH_RIGHT);
+                } else {
+                    tap_code(KC_MS_WH_LEFT);
+                }
+            case 2:
+                if (clockwise) {
+                    tap_code(KC_MS_WH_RIGHT);
+                } else {
+                    tap_code(KC_MS_WH_LEFT);
+                }
+            case 4:
+                if (clockwise) {
+                    tap_code(KC_VOLU);
+                } else {
+                    tap_code(KC_VOLD);
+                }
+            default:
+                if (clockwise) {
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                    tap_code(KC_DOWN);
+                } else {
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                    tap_code(KC_UP);
+                }
         }
-    } else if (index == 1) {
-        // Page up/Page down
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
+    } else if (index == 1) { /* Second encoder */
+        switch(biton32(layer_state)){
+            case 1:
+                if (clockwise) {
+                    tap_code(KC_UP);
+                } else {
+                    tap_code(KC_DOWN);
+                }
+            case 2:
+                if (clockwise) {
+                    tap_code(KC_UP);
+                } else {
+                    tap_code(KC_DOWN);
+                }
+            default:
+                if (clockwise) {
+                    tap_code(KC_LEFT);
+                } else {
+                    tap_code(KC_RGHT);
+                }
         }
     }
     return true;
