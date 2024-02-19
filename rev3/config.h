@@ -32,3 +32,5 @@
 #    define RGB_MATRIX_SPLIT { 31, 31 }
 #    define SPLIT_TRANSPORT_MIRROR
 #endif
+
+#define ENCODER_RESOLUTION 2
