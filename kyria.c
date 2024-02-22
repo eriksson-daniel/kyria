@@ -106,18 +106,22 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
                 } else {
                     tap_code(KC_MS_WH_LEFT);
                 }
+                
+                return true;
             case 2:
                 if (clockwise) {
                     tap_code(KC_MS_WH_RIGHT);
                 } else {
                     tap_code(KC_MS_WH_LEFT);
                 }
+                return true;
             case 4:
                 if (clockwise) {
                     tap_code(KC_VOLU);
                 } else {
                     tap_code(KC_VOLD);
                 }
+                return true;
             default:
                 if (clockwise) {
                     tap_code(KC_DOWN);
@@ -147,21 +151,24 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
         switch(biton32(layer_state)){
             case 1:
                 if (clockwise) {
-                    tap_code(KC_UP);
-                } else {
                     tap_code(KC_DOWN);
+                } else {
+                    tap_code(KC_UP);
                 }
+                return true;
             case 2:
                 if (clockwise) {
-                    tap_code(KC_UP);
-                } else {
                     tap_code(KC_DOWN);
+                } else {
+                    tap_code(KC_UP);
                 }
+                return true;
+
             default:
                 if (clockwise) {
-                    tap_code(KC_LEFT);
-                } else {
                     tap_code(KC_RGHT);
+                } else {
+                    tap_code(KC_LEFT);
                 }
         }
     }
