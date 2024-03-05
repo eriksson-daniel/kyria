@@ -7,7 +7,7 @@
   "layout": "LAYOUT_split_3x6_5",
   "layers": [
     [
-      "KC_ESC",
+      "LT(4,KC_ESC)",
       "KC_Q",
       "KC_W",
       "KC_E",
@@ -40,7 +40,7 @@
       "KC_LSFT",
       "KC_MPLY",
       "KC_MNXT",
-      "MO(4)",
+      "KC_RSFT",
       "KC_N",
       "KC_M",
       "KC_P",
@@ -215,7 +215,7 @@
       "KC_DOT"
     ],
     [
-      "RGB_M_P",
+      "KC_NO",
       "RGB_MOD",
       "RGB_HUI",
       "RGB_SAI",
@@ -256,7 +256,7 @@
       "KC_NO",
       "KC_NO",
       "RGB_TOG",
-      "KC_NO",
+      "RGB_M_P",
       "KC_NO",
       "KC_NO",
       "KC_NO",
