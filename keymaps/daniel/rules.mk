@@ -1,0 +1,1 @@
+SRC += animation.c
