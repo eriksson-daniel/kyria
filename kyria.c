@@ -18,14 +18,40 @@
 #include "animation.h"
 
 #ifdef OLED_ENABLE
+int idle_timer = 0;
+bool enabled = true;
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    oled_on();
+    idle_timer = timer_read();
+    enabled = true;
+
+    return true;
+}
+
+void idle_check(void) {
+    if (timer_elapsed(idle_timer) > 60000) {
+        enabled = false;
+    }
+}
+
 oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
     return OLED_ROTATION_180;
 }
 
 bool oled_task_kb(void) {
+    idle_check();
+    
+    if (!enabled) {
+        oled_off();
+
+        return false;
+    }
+
     if (!oled_task_user()) {
         return false;
     }
+
     if (is_keyboard_master()) {
         render_animation_left();
     } else {  
