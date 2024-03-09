@@ -10359,20 +10359,35 @@ uint16_t frame_sizes[150] = {
 	sizeof(epd_bitmap_frame_149_delay_0)
 };
 // Animation parameters
-#define FRAME_DURATION 100 // How long each frame lasts in milliseconds
+#define FRAME_DURATION 25 // How long each frame lasts in milliseconds
 
 // Animation variables
-uint32_t timer = 0;
+uint32_t leftTimer = 0;
+uint32_t rightTimer = 0;
 uint8_t current_frame_left = 0;
-uint8_t current_frame_right = 24;
+uint8_t current_frame_right = 13;
 
 
+#include "print.h"
+
+int frame_duration(void) {
+		int wpm = get_current_wpm();
+		int duration = (int)((1.0 / wpm) * 1000);
+
+		if (duration < 0) {
+			duration = 1;
+		} else if (duration > 1000) {
+			duration = 1000;
+		}
+
+		return duration;
+}
 
  void render_animation_left(void) {
     // Run animation
-    if (timer_elapsed(timer) > FRAME_DURATION) {
+    if (timer_elapsed(leftTimer) > frame_duration()) {
         // Set timer to updated time
-        timer = timer_read();
+        leftTimer = timer_read();
         
         // Increment frame
         current_frame_left = (current_frame_left + 1) % (sizeof(epd_bitmap_allArray) / sizeof(epd_bitmap_allArray[0]));
@@ -10384,9 +10399,9 @@ uint8_t current_frame_right = 24;
 
 void render_animation_right(void) {
     // Run animation
-    if (timer_elapsed(timer) > FRAME_DURATION) {
+    if (timer_elapsed(rightTimer) > frame_duration()) {
         // Set timer to updated time
-        timer = timer_read();
+        rightTimer = timer_read();
         
         // Increment frame
         current_frame_right = (current_frame_right + 1) % (sizeof(epd_bitmap_allArray) / sizeof(epd_bitmap_allArray[0]));
