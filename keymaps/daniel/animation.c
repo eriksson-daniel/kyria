@@ -10358,8 +10358,6 @@ uint16_t frame_sizes[150] = {
 	sizeof(epd_bitmap_frame_148_delay_0),
 	sizeof(epd_bitmap_frame_149_delay_0)
 };
-// Animation parameters
-#define FRAME_DURATION 25 // How long each frame lasts in milliseconds
 
 // Animation variables
 uint32_t leftTimer = 0;

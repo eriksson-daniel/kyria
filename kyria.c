@@ -16,6 +16,8 @@
 
 #include "quantum.h"
 #include "animation.h"
+#include "layers.h"
+#include "caps_lock.h"
 
 #ifdef OLED_ENABLE
 int idle_timer = 0;
@@ -39,23 +41,79 @@ oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
     return OLED_ROTATION_180;
 }
 
+enum Layer {
+    BASE,
+    NAV,
+    SPECIAL_CHARS,
+    NUM,
+    MEDIA
+};
+
 bool oled_task_kb(void) {
     idle_check();
-    
+
     if (!enabled) {
         oled_off();
 
         return false;
     }
 
-    if (!oled_task_user()) {
-        return false;
-    }
+    if (!oled_task_user()) return false;
+
+    led_t led_state = host_keyboard_led_state();
 
     if (is_keyboard_master()) {
-        render_animation_left();
-    } else {  
-        render_animation_right();
+        if (led_state.caps_lock) {
+            caps();
+            return false;
+        }
+
+        switch (get_highest_layer(layer_state)) {
+            case BASE:
+                render_animation_left();
+                // layer_0_left();
+                break;
+            case NAV:
+                layer_1_left();
+                break;
+            case SPECIAL_CHARS:
+                layer_2_left();
+                break;
+            case NUM:
+                layer_3_left();
+                break;
+            case MEDIA:
+                layer_0_left();
+                break;
+            default:
+                render_animation_left();
+        }
+    } else {
+        if (led_state.caps_lock) {
+            lock();
+            return false;
+        }
+
+        switch (get_highest_layer(layer_state)) {
+            case BASE:
+                render_animation_right();
+                // layer_0_right();
+                break;
+            case NAV:
+                layer_1_right();
+                break;
+            case SPECIAL_CHARS:
+                layer_2_right();
+                break;
+            case NUM:
+                layer_3_right();
+                break;
+            case MEDIA:
+                layer_0_right();
+                break;
+            default:
+                render_animation_right();
+        }
     }
     return false;
 }
@@ -102,16 +160,16 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
                     tap_code(KC_TAB);
                     unregister_code(KC_LEFT_SHIFT);
                 }
-            
+
                 return true;
             case 4:
                 if (clockwise) {
                     tap_code(KC_VOLU);
-                } else { 
+                } else {
                     tap_code(KC_VOLD);
                 }
 
-                return true;    
+                return true;
             default:
                 if (clockwise) {
                     tap_code(KC_DOWN);

@@ -10,25 +10,6 @@ display: flex   ;
     align-items: center;
 
 }
-
-
-.board {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 100px;
-  margin-bottom: 5em;
-}
-
-.main {
-  display: flex;
-  align-items: flex-end;
-}
-
-.column {
-  display: flex;
-  flex-direction: column;
-}
 /*
 .left .column:nth-child(1),
 .left .column:nth-child(2),
@@ -55,26 +36,57 @@ display: flex   ;
   margin-bottom:20px;
 } */
 
+.board {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 100px;
+  margin-bottom: 5em;
+}
+
+.main {
+  display: flex;
+  align-self: flex-start;
+}
+
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+
 .key {
-  border: .5px solid #ccc;
-  width: 18px;
-  height: 18px;
+  font-family: 'Courier New', monospace;
+  padding-top: 2px;
+  border: .25px solid white;
+  color: white;
+  width: 16px;
+  height: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 8px;
+  font-size: 10px;
   word-break: break-all;
-  line-height: normal;
+  line-height: 0.65;
   text-align: center;
+  overflow: hidden;
 }
 
 .thumbStack .key {
-    color: black;
-    background-color: white;
+    border-style: dashed;
 }
 
 .half {
     position: relative;
+    display: flex;
+    width: 128px;
+    height: 64px;
+    margin-top: -1px;
+}
+
+.right.half {
+    justify-content: flex-end;
 }
 
 .thumbStack {
@@ -82,18 +94,17 @@ display: flex   ;
     flex-direction: column;
     width: fit-content;
     position: absolute;
+    bottom: 0px;
 }
 
 .thumbStack.left {
     justify-content: flex-end;
-    bottom: -18px;
-    right: -36px;
+    right: 0;
 }
 
 .thumbStack.right {
     justify-content: flex-start;
-    bottom: -18px;
-    left: -36px;
+    left: 0;
 }
 
 .thumbStack.left .toprow {

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import daniel from '/home/daniel/repos/qmk_firmware/keyboards/splitkb/kyria/keymaps/daniel/daniel.json'
+import daniel from 'C:\\Users\\Daniel\\qmk_firmware\\keyboards\\splitkb\\kyria\\keymaps\\daniel\\daniel.json'
 import { mapKey } from './mapKey'
 
 type Column = string[]
@@ -73,7 +73,7 @@ const Layout = ({ layout }: { layout: Layout }) => {
 
     return (
         <div className='board'>
-            <div className='half'>
+            <div className='left half'>
                 <div className='left main'>
                     {leftMain.map((column, index) => <KeyColumn key={index} column={column} />)}
                 </div>
@@ -81,7 +81,7 @@ const Layout = ({ layout }: { layout: Layout }) => {
                 <ThumbStack thumbStack={leftThumbStack} side='left' />
             </div>
 
-            <div className='half'>
+            <div className='right half'>
                 <div className='right main'>
                     {rightMain.map((column, index) => <KeyColumn key={index} column={column} />)}
                 </div>
@@ -92,11 +92,17 @@ const Layout = ({ layout }: { layout: Layout }) => {
     )
 }
 
+const getFontSize = (key: string) => {
+    if (key.length === 1) return 18
+    if (key.length > 4) return 8
+    return 11
+}
+
 const KeyColumn = ({ column }: { column: Column }) => {
     return (
         <div className="column">
             {column.map((key, index) => (
-                <div key={index} className="key">
+                <div key={index} className="key" style={{fontSize: getFontSize(key)}}>
                     {key}
                 </div>
             ))}
@@ -108,11 +114,10 @@ type Side = 'left' | 'right'
 
 const ThumbStack = ({ thumbStack, side }: { thumbStack: ThumbStack, side: Side }) => {
     return (
-        <div className={`${side} thumbStack`
-        }>
+        <div className={`${side} thumbStack`}>
             <div className={`toprow`}>
                 {thumbStack.slice(5).map((key, index) => (
-                    <div key={index} className="key">
+                    <div key={index} className="key"style={{fontSize: getFontSize(key)}}>
                         {key}
                     </div>
                 ))}
@@ -120,7 +125,7 @@ const ThumbStack = ({ thumbStack, side }: { thumbStack: ThumbStack, side: Side }
 
             <div className='bottomrow'>
                 {thumbStack.slice(0, 5).map((key, index) => (
-                    <div key={index} className="key">
+                    <div key={index} className="key"style={{fontSize: getFontSize(key)}}>
                         {key}
                     </div>
                 ))}
