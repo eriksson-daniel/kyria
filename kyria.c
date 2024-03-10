@@ -121,7 +121,7 @@ bool oled_task_kb(void) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_kb(uint8_t index, bool clockwise) {
-    if (!encoder_update_user(index, clockwise)) { return false; }
+    if (!encoder_update_user(index, clockwise)) return false;
     if (index == 0) {
         switch(biton32(layer_state)) {
             case 1:
@@ -132,6 +132,7 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
                 }
 
                 return true;
+
             case 4:
                 if (clockwise) {
                     tap_code(KC_VOLU);
@@ -148,7 +149,6 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
                 }
 
                 return true;
-
         }
     } else if (index == 1) { /* Second encoder */
         switch(biton32(layer_state)){
