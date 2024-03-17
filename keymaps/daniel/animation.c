@@ -10363,34 +10363,52 @@ uint16_t frame_sizes[150] = {
 uint32_t leftTimer = 0;
 uint32_t rightTimer = 0;
 uint8_t current_frame_left = 0;
-uint8_t current_frame_right = 0;
+uint8_t current_frame_right = 13;
+int idle_timer = 0;
+bool enabled = true;
 
+// Objekt som holder på dataene som deles med slaven
 typedef struct _master_to_slave_t  {
-    uint8_t keycode;
+    uint8_t last_frame_left;
+    bool enabled;
 } master_to_slave_t;
 
-master_to_slave_t last_frame_left;
+// Lager en slags variabel av structen(?)
+master_to_slave_t master_to_slave;
 
 #define FASTEST_ANIMATION_SPEED 50
 #define SLOWEST_ANIMATION_SPEED 500
 
 int frame_duration(void) {
-		int wpm = get_current_wpm();
+    int wpm = get_current_wpm();
 
-        if (wpm == 0) return SLOWEST_ANIMATION_SPEED;
+    if (wpm == 0) return SLOWEST_ANIMATION_SPEED;
 
-		int duration = (int)((10.0 / wpm) * SLOWEST_ANIMATION_SPEED);
+    int duration = (int)((10.0 / wpm) * SLOWEST_ANIMATION_SPEED);
 
-		if (duration < FASTEST_ANIMATION_SPEED) {
-			duration = FASTEST_ANIMATION_SPEED;
-		} else if (duration > SLOWEST_ANIMATION_SPEED) {
-			duration = SLOWEST_ANIMATION_SPEED;
-		}
+    if (duration < FASTEST_ANIMATION_SPEED) {
+        duration = FASTEST_ANIMATION_SPEED;
+    } else if (duration > SLOWEST_ANIMATION_SPEED) {
+        duration = SLOWEST_ANIMATION_SPEED;
+    }
 
-		return duration;
+    return duration;
+}
+
+void idle_check(void) {
+    if (timer_elapsed(idle_timer) > 60000) {
+        enabled = false;
+    }
 }
 
  void render_animation_left(void) {
+    if (!enabled) {
+        oled_off();
+        return;
+    }
+
+    idle_check();
+
     // Run animation
     if (timer_elapsed(leftTimer) > frame_duration()) {
         // Set timer to updated time
@@ -10398,14 +10416,21 @@ int frame_duration(void) {
 
         // Increment frame
         current_frame_left = (current_frame_left + 1) % (sizeof(epd_bitmap_allArray) / sizeof(epd_bitmap_allArray[0]));
-        last_frame_left.keycode = current_frame_left + 13;
+        master_to_slave.last_frame_left = current_frame_left + 13;
+        master_to_slave.enabled = enabled;
         // Draw frame to OLED
         oled_write_raw_P(epd_bitmap_allArray[current_frame_left], frame_sizes[current_frame_left]);
    }
 }
 
 void render_animation_right(void) {
-	printf("render_animation_right\n");
+    if (!enabled) {
+        oled_off();
+        return;
+    }
+
+    // Ikke vits i å kjøre idle_check her, siden den må komme via sync, tror jeg
+
     // Run animation
     if (timer_elapsed(rightTimer) > frame_duration()) {
         // Set timer to updated time
@@ -10420,11 +10445,22 @@ void render_animation_right(void) {
 }
 
 #include "transactions.h"
+#include "quantum.h"
 
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    oled_on();
+    idle_timer = timer_read();
+    enabled = true;
+
+    return true;
+}
 
 void user_sync_a_slave_handler(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
     const master_to_slave_t* m2s = (const master_to_slave_t*)in_data;
-    current_frame_right = m2s->keycode;
+
+    // Skriv lokale varible fra structen fra master
+    current_frame_right = m2s->last_frame_left;
+    enabled = m2s->enabled;
 }
 
 void keyboard_post_init_user(void) {
@@ -10437,7 +10473,8 @@ void housekeeping_task_user(void) {
     static uint32_t last_sync = 0;
 
     if (timer_elapsed32(last_sync) > 500) {
-        if (transaction_rpc_send(USER_SYNC_A, sizeof(last_frame_left), &last_frame_left)) {
+        // Sender dataene tror jeg?
+        if (transaction_rpc_send(USER_SYNC_A, sizeof(master_to_slave), &master_to_slave)) {
             last_sync = timer_read32();
         } else {
             dprint("Slave sync failed!\n");
